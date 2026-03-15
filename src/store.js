@@ -1,39 +1,52 @@
-// Vocabulary store backed by localStorage, scoped per book
+import { supabase } from './supabase';
 
-function storageKey(bookId) {
-  return `lpp_vocab_${bookId}`;
+export async function loadVocab(userId, bookId) {
+  const { data, error } = await supabase
+    .from('vocab')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('book_id', bookId)
+    .order('saved_at', { ascending: true });
+
+  if (error) { console.error(error); return []; }
+  return data.map(toEntry);
 }
 
-export function loadVocab(bookId) {
-  try {
-    return JSON.parse(localStorage.getItem(storageKey(bookId))) || [];
-  } catch {
-    return [];
-  }
-}
-
-export function saveVocab(bookId, vocab) {
-  localStorage.setItem(storageKey(bookId), JSON.stringify(vocab));
-}
-
-export function addWord(vocab, { word, chapterIndex, paragraphIndex, sentenceContext }) {
-  const exists = vocab.some(
-    (v) => v.word === word && v.chapterIndex === chapterIndex && v.paragraphIndex === paragraphIndex
-  );
-  if (exists) return vocab;
-  return [
-    ...vocab,
-    {
-      id: Date.now(),
+export async function addWord(userId, bookId, { word, chapterIndex, paragraphIndex, sentenceContext }) {
+  const { data, error } = await supabase
+    .from('vocab')
+    .insert({
+      user_id: userId,
+      book_id: bookId,
       word,
-      chapterIndex,
-      paragraphIndex,
-      sentenceContext,
-      savedAt: new Date().toISOString(),
-    },
-  ];
+      chapter_index: chapterIndex,
+      paragraph_index: paragraphIndex,
+      sentence_context: sentenceContext,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    // Unique constraint violation = already saved, not a real error
+    if (error.code !== '23505') console.error(error);
+    return null;
+  }
+  return toEntry(data);
 }
 
-export function removeWord(vocab, id) {
-  return vocab.filter((v) => v.id !== id);
+export async function removeWord(id) {
+  const { error } = await supabase.from('vocab').delete().eq('id', id);
+  if (error) console.error(error);
+}
+
+// Map snake_case DB columns → camelCase app fields
+function toEntry(row) {
+  return {
+    id: row.id,
+    word: row.word,
+    chapterIndex: row.chapter_index,
+    paragraphIndex: row.paragraph_index,
+    sentenceContext: row.sentence_context,
+    savedAt: row.saved_at,
+  };
 }

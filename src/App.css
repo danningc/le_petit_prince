@@ -803,6 +803,142 @@
   color: var(--text-muted);
 }
 
+/* ── Auth screen ── */
+.auth-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.auth-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.auth-icon {
+  font-size: 36px;
+  text-align: center;
+}
+
+.auth-title {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-style: italic;
+  color: var(--accent);
+  margin: 0;
+  text-align: center;
+}
+
+.auth-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: center;
+}
+
+.auth-box h2 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: var(--text);
+  margin: 0;
+  text-align: center;
+}
+
+.auth-box p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.auth-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.auth-form input {
+  font-family: inherit;
+  font-size: 15px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.auth-form input:focus {
+  border-color: var(--accent);
+}
+
+.auth-form button {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 11px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.auth-form button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.auth-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.auth-error {
+  font-size: 13px;
+  color: #c0392b;
+  text-align: center;
+  margin: 0;
+}
+
+/* ── Sign-out button ── */
+.btn-signout {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-signout:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
 /* ── Loading / Error screens ── */
 .loading-screen,
 .error-screen {
