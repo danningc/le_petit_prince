@@ -35,7 +35,7 @@ async function fetchTranslation(word) {
 
 async function fetchDefinition(word) {
   const res = await fetch(
-    `https://fr.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(word)}`
+    `https://en.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(word)}`
   );
   if (!res.ok) return null;
   const data = await res.json();
