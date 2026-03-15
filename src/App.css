@@ -20,6 +20,52 @@
   gap: 16px;
 }
 
+.book-switcher {
+  display: flex;
+  gap: 4px;
+}
+
+.book-tab {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 4px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1.2;
+}
+
+.book-tab:hover {
+  background: var(--accent-light);
+  border-color: var(--border);
+}
+
+.book-tab.active {
+  background: var(--accent-light);
+  border-color: var(--border);
+}
+
+.book-tab-title {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.book-tab.active .book-tab-title {
+  font-weight: 700;
+}
+
+.book-tab-author {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 .book-title {
   font-family: var(--font-serif);
   font-size: 18px;

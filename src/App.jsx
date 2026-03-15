@@ -4,27 +4,38 @@ import VocabList from './components/VocabList';
 import Flashcard from './components/Flashcard';
 import { loadVocab, saveVocab, addWord, removeWord } from './store';
 import { loadBook } from './textLoader';
+import { BOOKS } from './books';
 import './App.css';
 
 export default function App() {
-  const [view, setView] = useState('reader'); // 'reader' | 'vocab'
+  const [bookId, setBookId] = useState(BOOKS[0].id);
+  const [view, setView] = useState('reader');
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentChapter, setCurrentChapter] = useState(0);
-  const [savedWords, setSavedWords] = useState(loadVocab);
+  const [savedWords, setSavedWords] = useState(() => loadVocab(BOOKS[0].id));
   const [jumpTarget, setJumpTarget] = useState(null);
 
+  const currentBook = BOOKS.find((b) => b.id === bookId);
+
+  // Reload book text and vocab when the selected book changes
   useEffect(() => {
-    loadBook()
+    setLoading(true);
+    setError(null);
+    setChapters([]);
+    setCurrentChapter(0);
+    setJumpTarget(null);
+    setSavedWords(loadVocab(bookId));
+    loadBook(currentBook.textFile)
       .then(setChapters)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [bookId]);
 
   useEffect(() => {
-    saveVocab(savedWords);
-  }, [savedWords]);
+    saveVocab(bookId, savedWords);
+  }, [savedWords, bookId]);
 
   function handleSave(wordData) {
     setSavedWords((prev) => addWord(prev, wordData));
@@ -48,6 +59,11 @@ export default function App() {
     setView('reader');
   }
 
+  function handleBookChange(newBookId) {
+    setBookId(newBookId);
+    setView('reader');
+  }
+
   if (loading) {
     return (
       <div className="loading-screen">
@@ -61,14 +77,6 @@ export default function App() {
     return (
       <div className="error-screen">
         <h2>Texte introuvable</h2>
-        <p>
-          Veuillez placer le fichier <code>le-petit-prince.txt</code> dans le dossier{' '}
-          <code>public/</code> et relancer le serveur.
-        </p>
-        <p className="hint">
-          Le texte original en français est disponible sur des sites de domaine public (ex. Wikisource)
-          dans les pays où l'œuvre est libre de droits.
-        </p>
         <p className="error-detail">{error}</p>
       </div>
     );
@@ -77,7 +85,19 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <div className="book-title">Le Petit Prince</div>
+        <div className="book-switcher">
+          {BOOKS.map((book) => (
+            <button
+              key={book.id}
+              className={`book-tab ${bookId === book.id ? 'active' : ''}`}
+              onClick={() => handleBookChange(book.id)}
+            >
+              <span className="book-tab-title">{book.title}</span>
+              <span className="book-tab-author">{book.author}</span>
+            </button>
+          ))}
+        </div>
+
         <nav className="app-nav">
           <button
             className={view === 'reader' ? 'active' : ''}

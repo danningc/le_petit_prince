@@ -1,21 +1,22 @@
-// Vocabulary store backed by localStorage
+// Vocabulary store backed by localStorage, scoped per book
 
-const STORAGE_KEY = 'lpp_vocab';
+function storageKey(bookId) {
+  return `lpp_vocab_${bookId}`;
+}
 
-export function loadVocab() {
+export function loadVocab(bookId) {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    return JSON.parse(localStorage.getItem(storageKey(bookId))) || [];
   } catch {
     return [];
   }
 }
 
-export function saveVocab(vocab) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(vocab));
+export function saveVocab(bookId, vocab) {
+  localStorage.setItem(storageKey(bookId), JSON.stringify(vocab));
 }
 
 export function addWord(vocab, { word, chapterIndex, paragraphIndex, sentenceContext }) {
-  // Avoid exact duplicates (same word + same location)
   const exists = vocab.some(
     (v) => v.word === word && v.chapterIndex === chapterIndex && v.paragraphIndex === paragraphIndex
   );

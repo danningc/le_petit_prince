@@ -2,9 +2,9 @@
  * Loads the pre-extracted plain-text book and parses it into chapters.
  * Generate the text file once with: npm run extract
  */
-export async function loadBook() {
-  const res = await fetch('/le-petit-prince.txt');
-  if (!res.ok) throw new Error('Text file not found — run: npm run extract');
+export async function loadBook(textFile = '/le-petit-prince.txt') {
+  const res = await fetch(textFile);
+  if (!res.ok) throw new Error(`Text file not found: ${textFile}`);
   const raw = await res.text();
   return parseBook(raw);
 }
@@ -15,8 +15,8 @@ function parseBook(raw) {
   let currentChapter = null;
   let currentParagraphLines = [];
 
-  // Matches: "PREMIER CHAPITRE", "CHAPITRE II", "CHAPITRE 3"
-  const chapterPattern = /^(premier\s+chapitre|chapitre\s+[IVXLCDM\d]+)/i;
+  // Matches: "PREMIER CHAPITRE", "CHAPITRE II", "Première partie — I", etc.
+  const chapterPattern = /^(premier\s+chapitre|chapitre\s+[IVXLCDM\d]+|première\s+partie\s+—|deuxième\s+partie\s+—)/i;
 
   function flushParagraph() {
     const text = currentParagraphLines.join(' ').trim();
