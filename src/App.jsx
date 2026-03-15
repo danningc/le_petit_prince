@@ -163,9 +163,12 @@ export default function App() {
           </button>
         </nav>
 
-        <button className="btn-signout" onClick={handleSignOut}>
-          Déconnexion
-        </button>
+        <div className="user-info">
+          <span className="user-email">{user.email}</span>
+          <button className="btn-signout" onClick={handleSignOut}>
+            Déconnexion
+          </button>
+        </div>
       </header>
 
       <main className="app-main">
