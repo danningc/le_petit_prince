@@ -20,14 +20,21 @@ export async function lookupWord(word) {
 }
 
 async function fetchTranslation(word) {
-  const res = await fetch(
-    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=fr|en`
-  );
+  const apiKey = import.meta.env.VITE_DEEPL_API_KEY;
+  if (!apiKey) return null;
+
+  const res = await fetch('https://api-free.deepl.com/v2/translate', {
+    method: 'POST',
+    headers: {
+      'Authorization': `DeepL-Auth-Key ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ text: [word], source_lang: 'FR', target_lang: 'EN' }),
+  });
   if (!res.ok) return null;
   const data = await res.json();
-  const text = data.responseData?.translatedText;
-  // MyMemory echoes back the input when it can't translate
-  if (!text || text.toLowerCase() === word) return null;
+  const text = data.translations?.[0]?.text;
+  if (!text || text.toLowerCase() === word.toLowerCase()) return null;
   return text;
 }
 
