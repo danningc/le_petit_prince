@@ -20,26 +20,13 @@ export async function lookupWord(word) {
 }
 
 async function fetchTranslation(word) {
-  const apiKey = import.meta.env.VITE_DEEPL_API_KEY;
-  if (!apiKey) {
-    console.warn('[translator] VITE_DEEPL_API_KEY not set');
-    return null;
-  }
-
-  const res = await fetch('https://api-free.deepl.com/v2/translate', {
+  const res = await fetch('/api/translate', {
     method: 'POST',
-    headers: {
-      'Authorization': `DeepL-Auth-Key ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text: [word], source_lang: 'FR', target_lang: 'EN-US' }),
   });
 
-  if (!res.ok) {
-    console.error('[translator] DeepL error', res.status, await res.text());
-    return null;
-  }
-
+  if (!res.ok) return null;
   const data = await res.json();
   const text = data.translations?.[0]?.text;
   if (!text || text.toLowerCase() === word.toLowerCase()) return null;
