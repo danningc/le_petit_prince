@@ -803,6 +803,123 @@
   color: var(--text-muted);
 }
 
+/* ── Bottom nav (mobile only) ── */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  /* Show bottom nav, hide top nav */
+  .app-nav {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: var(--bg-header);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .bottom-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 10px 4px 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    position: relative;
+    transition: color 0.15s;
+  }
+
+  .bottom-nav button.active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .bottom-nav .badge {
+    position: absolute;
+    top: 6px;
+    right: calc(50% - 20px);
+    font-size: 9px;
+    padding: 0 4px;
+  }
+
+  .bottom-nav-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  /* Shrink header for mobile */
+  .app-header {
+    padding: 0 12px;
+    height: auto;
+    min-height: 48px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .book-switcher {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .book-tab {
+    padding: 3px 8px;
+  }
+
+  .book-tab-title {
+    font-size: 12px;
+  }
+
+  .book-tab-author {
+    font-size: 9px;
+  }
+
+  .user-email {
+    max-width: 100px;
+    font-size: 11px;
+  }
+
+  .btn-signout {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  /* Add space so content doesn't hide behind bottom nav */
+  .app-main {
+    padding: 0 16px 80px;
+  }
+
+  /* Larger touch targets for word tokens */
+  .word-token {
+    padding: 2px 2px;
+    margin: -2px 0;
+  }
+
+  /* Slightly smaller reading font on small screens */
+  .chapter-body {
+    font-size: 17px;
+    line-height: 1.9;
+  }
+
+  /* Full-width word panel on mobile */
+  .wp-panel {
+    border-radius: 20px 20px 0 0;
+  }
+}
+
 /* ── Auth screen ── */
 .auth-screen {
   display: flex;
@@ -878,7 +995,7 @@
 
 .auth-form input {
   font-family: inherit;
-  font-size: 15px;
+  font-size: 16px;
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: 8px;

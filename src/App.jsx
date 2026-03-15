@@ -171,6 +171,31 @@ export default function App() {
         </div>
       </header>
 
+      <nav className="bottom-nav">
+        <button
+          className={view === 'reader' ? 'active' : ''}
+          onClick={() => setView('reader')}
+        >
+          <span className="bottom-nav-icon">📖</span>
+          Lire
+        </button>
+        <button
+          className={view === 'vocab' ? 'active' : ''}
+          onClick={() => setView('vocab')}
+        >
+          <span className="bottom-nav-icon">📝</span>
+          Vocabulaire
+          {savedWords.length > 0 && <span className="badge">{savedWords.length}</span>}
+        </button>
+        <button
+          className={view === 'flashcard' ? 'active' : ''}
+          onClick={() => setView('flashcard')}
+        >
+          <span className="bottom-nav-icon">🃏</span>
+          Réviser
+        </button>
+      </nav>
+
       <main className="app-main">
         {view === 'reader' ? (
           <Reader

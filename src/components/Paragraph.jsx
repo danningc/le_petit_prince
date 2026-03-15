@@ -21,13 +21,20 @@ export default function Paragraph({ text, chapterIndex, paragraphIndex, savedWor
       .map((v) => v.word)
   );
 
+  function getSentence(word) {
+    const sentences = text.match(/[^.!?…]+[.!?…]*/g) || [text];
+    const lower = word.toLowerCase();
+    const found = sentences.find((s) => s.toLowerCase().includes(lower));
+    return found ? found.trim() : text;
+  }
+
   function handleSelect(core) {
     const word = core.toLowerCase();
     onWordSelect({
       word,
       chapterIndex,
       paragraphIndex,
-      sentenceContext: text.slice(0, 120) + (text.length > 120 ? '…' : ''),
+      sentenceContext: getSentence(word),
       isSaved: savedSet.has(word),
     });
   }
