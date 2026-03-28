@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Paragraph from './Paragraph';
 import WordPanel from './WordPanel';
 
-export default function Reader({ chapters, currentChapter, setCurrentChapter, savedWords, onSave, onUnsave, jumpTarget, onJumpDone }) {
+export default function Reader({ chapters, currentChapter, setCurrentChapter, savedWords, onSave, onUnsave, jumpTarget, onJumpDone, lang }) {
   const containerRef = useRef(null);
   const [activeWord, setActiveWord] = useState(null); // { word, chapterIndex, paragraphIndex, sentenceContext, isSaved }
 
@@ -95,6 +95,7 @@ export default function Reader({ chapters, currentChapter, setCurrentChapter, sa
       {activeWord && (
         <WordPanel
           wordData={activeWord}
+          lang={lang}
           isSaved={panelIsSaved}
           onSave={handleSave}
           onUnsave={handleUnsave}

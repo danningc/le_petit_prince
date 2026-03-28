@@ -871,12 +871,14 @@
   }
 
   .book-switcher {
-    flex: 1;
-    min-width: 0;
+    width: 100%;
+    order: -1;
   }
 
   .book-tab {
-    padding: 3px 8px;
+    flex: 1;
+    padding: 5px 4px;
+    text-align: center;
   }
 
   .book-tab-title {

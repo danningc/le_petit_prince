@@ -1,29 +1,30 @@
 // Simple in-memory cache to avoid refetching the same word
 const cache = new Map();
 
-export async function lookupWord(word) {
-  const key = word.toLowerCase();
+export async function lookupWord(word, lang = 'FR') {
+  const normalized = word.toLowerCase();
+  const key = `${lang}:${normalized}`;
   if (cache.has(key)) return cache.get(key);
 
-  const [translationResult, definitionResult] = await Promise.allSettled([
-    fetchTranslation(key),
-    fetchDefinition(key),
-  ]);
+  const promises = [fetchTranslation(normalized, lang)];
+  if (lang === 'FR') promises.push(fetchDefinition(normalized));
+
+  const [translationResult, definitionResult] = await Promise.allSettled(promises);
 
   const result = {
     translation: translationResult.status === 'fulfilled' ? translationResult.value : null,
-    definition: definitionResult.status === 'fulfilled' ? definitionResult.value : null,
+    definition: definitionResult?.status === 'fulfilled' ? definitionResult.value : null,
   };
 
   cache.set(key, result);
   return result;
 }
 
-async function fetchTranslation(word) {
+async function fetchTranslation(word, lang) {
   const res = await fetch('/api/translate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: [word], source_lang: 'FR', target_lang: 'EN-US' }),
+    body: JSON.stringify({ text: [word], source_lang: lang, target_lang: 'EN-US' }),
   });
 
   if (!res.ok) return null;

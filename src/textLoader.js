@@ -2,21 +2,21 @@
  * Loads the pre-extracted plain-text book and parses it into chapters.
  * Generate the text file once with: npm run extract
  */
-export async function loadBook(textFile = '/le-petit-prince.txt') {
+export async function loadBook(textFile = '/le-petit-prince.txt', chapterPattern) {
   const res = await fetch(textFile);
   if (!res.ok) throw new Error(`Text file not found: ${textFile}`);
   const raw = await res.text();
-  return parseBook(raw);
+  return parseBook(raw, chapterPattern);
 }
 
-function parseBook(raw) {
+function parseBook(raw, chapterPattern) {
   const lines = raw.split('\n');
   const chapters = [];
   let currentChapter = null;
   let currentParagraphLines = [];
 
-  // Matches: "PREMIER CHAPITRE", "CHAPITRE II", "Première partie — I", etc.
-  const chapterPattern = /^(premier\s+chapitre|chapitre\s+[IVXLCDM\d]+|première\s+partie\s+—|deuxième\s+partie\s+—)/i;
+  // Default: matches French chapter headings. Books can supply their own pattern.
+  const pattern = chapterPattern ?? /^(premier\s+chapitre|chapitre\s+[IVXLCDM\d]+|première\s+partie\s+—|deuxième\s+partie\s+—)/i;
 
   function flushParagraph() {
     const text = currentParagraphLines.join(' ').trim();
@@ -33,7 +33,7 @@ function parseBook(raw) {
 
   for (const line of lines) {
     const trimmed = line.trim();
-    if (chapterPattern.test(trimmed)) {
+    if (pattern.test(trimmed)) {
       flushChapter();
       currentChapter = { title: trimmed, paragraphs: [] };
     } else if (trimmed === '') {

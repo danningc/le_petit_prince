@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { lookupWord } from '../translator';
 
-export default function WordPanel({ wordData, isSaved, onSave, onUnsave, onClose }) {
+export default function WordPanel({ wordData, lang = 'FR', isSaved, onSave, onUnsave, onClose }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setResult(null);
     setLoading(true);
-    lookupWord(wordData.word)
+    lookupWord(wordData.word, lang)
       .then(setResult)
       .catch(() => setResult({}))
       .finally(() => setLoading(false));
-  }, [wordData.word]);
+  }, [wordData.word, lang]);
 
   return (
     <div className="wp-overlay" onClick={onClose}>

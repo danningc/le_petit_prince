@@ -12,16 +12,33 @@ import './App.css';
 export default function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [bookId, setBookId] = useState(BOOKS[0].id);
+  const [bookId, setBookId] = useState(() =>
+    localStorage.getItem('reading-book') ?? BOOKS[0].id
+  );
   const [view, setView] = useState('reader');
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentChapter, setCurrentChapter] = useState(0);
+  const [currentChapter, setCurrentChapter] = useState(() => {
+    const chapters = JSON.parse(localStorage.getItem('reading-chapters') ?? '{}');
+    const savedBook = localStorage.getItem('reading-book') ?? BOOKS[0].id;
+    return chapters[savedBook] ?? 0;
+  });
   const [savedWords, setSavedWords] = useState([]);
   const [jumpTarget, setJumpTarget] = useState(null);
 
   const currentBook = BOOKS.find((b) => b.id === bookId);
+
+  function saveChapter(bid, chapterIndex) {
+    localStorage.setItem('reading-book', bid);
+    const chapters = JSON.parse(localStorage.getItem('reading-chapters') ?? '{}');
+    chapters[bid] = chapterIndex;
+    localStorage.setItem('reading-chapters', JSON.stringify(chapters));
+  }
+
+  useEffect(() => {
+    saveChapter(bookId, currentChapter);
+  }, [bookId, currentChapter]);
 
   // Listen for auth state changes
   useEffect(() => {
@@ -43,17 +60,17 @@ export default function App() {
     setLoading(true);
     setError(null);
     setChapters([]);
-    setCurrentChapter(0);
     setJumpTarget(null);
     setSavedWords([]);
 
     Promise.all([
-      loadBook(currentBook.textFile),
+      loadBook(currentBook.textFile, currentBook.chapterPattern),
       loadVocab(user.id, bookId),
     ])
       .then(([chaps, vocab]) => {
         setChapters(chaps);
         setSavedWords(vocab);
+        setCurrentChapter((c) => Math.min(c, chaps.length - 1));
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
@@ -85,7 +102,9 @@ export default function App() {
   }
 
   function handleBookChange(newBookId) {
+    const savedChapters = JSON.parse(localStorage.getItem('reading-chapters') ?? '{}');
     setBookId(newBookId);
+    setCurrentChapter(savedChapters[newBookId] ?? 0);
     setView('reader');
   }
 
@@ -207,6 +226,7 @@ export default function App() {
             onUnsave={handleUnsave}
             jumpTarget={jumpTarget}
             onJumpDone={() => setJumpTarget(null)}
+            lang={currentBook.lang}
           />
         ) : view === 'vocab' ? (
           <VocabList
